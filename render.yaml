@@ -39,7 +39,7 @@ services:
     plan: free
     rootDir: campus-hub-frontend
     buildCommand: npm install && npm run build
-    startCommand: npm run preview
+    startCommand: npm run preview -- --host 0.0.0.0 --port $PORT
     envVars:
       - key: VITE_API_BASE_URL
         value: https://${campus-hub-backend.onrender.com}/api
