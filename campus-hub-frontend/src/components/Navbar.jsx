@@ -1,11 +1,12 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { AuthContext } from '../context/AuthContext';
 
 function Navbar() {
     const { user, logout } = useContext(AuthContext);
     const navigate = useNavigate();
     const location = useLocation();
+    const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const handleLogout = () => {
         logout();
@@ -43,35 +44,78 @@ function Navbar() {
                             </div>
                         )}
                     </div>
-                    <div className="flex items-center space-x-6">
-                        {user ? (
-                            <>
-                                <Link to="/report" className="hidden md:inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full shadow-sm text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 transition-all">
-                                    Report Item
-                                </Link>
-                                <Link to="/sell" className="hidden md:inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full shadow-sm text-blue-700 bg-blue-100 hover:bg-blue-200 transition-colors">
-                                    Sell Item
-                                </Link>
-                                <div className="ml-4 flex items-center space-x-4 border-l border-slate-200 pl-4">
-                                    <Link to="/profile" className="text-sm font-medium text-slate-700 hover:text-cyan-600 transition-colors">
-                                        Hi, {user.name.split(' ')[0]}
+                    <div className="flex items-center">
+                        {/* Mobile Menu Button */}
+                        <div className="md:hidden">
+                            <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="inline-flex items-center justify-center p-2 rounded-md text-slate-400 hover:text-slate-500 hover:bg-slate-100 focus:outline-none">
+                                <svg className="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d={isMobileMenuOpen ? "M6 18L18 6M6 6l12 12" : "M4 6h16M4 12h16M4 18h16"} />
+                                </svg>
+                            </button>
+                        </div>
+
+                        {/* Desktop Menu */}
+                        <div className="hidden md:flex items-center space-x-6">
+                            {user ? (
+                                <>
+                                    <Link to="/report" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full shadow-sm text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 transition-all">
+                                        Report Item
                                     </Link>
-                                    <button onClick={handleLogout} className="text-slate-400 hover:text-red-500 transition-colors">
-                                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                                            <path fillRule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clipRule="evenodd" />
-                                        </svg>
-                                    </button>
+                                    <Link to="/sell" className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-full shadow-sm text-blue-700 bg-blue-100 hover:bg-blue-200 transition-colors">
+                                        Sell Item
+                                    </Link>
+                                    <div className="ml-4 flex items-center space-x-4 border-l border-slate-200 pl-4">
+                                        <Link to="/profile" className="text-sm font-medium text-slate-700 hover:text-cyan-600 transition-colors">
+                                            Hi, {user.name.split(' ')[0]}
+                                        </Link>
+                                        <button onClick={handleLogout} className="text-slate-400 hover:text-red-500 transition-colors">
+                                            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                                <path fillRule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clipRule="evenodd" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </>
+                            ) : (
+                                <div className="space-x-4 flex items-center">
+                                    <Link to="/login" className="text-slate-600 font-medium hover:text-cyan-600 transition-colors text-sm">Log in</Link>
+                                    <Link to="/register" className="inline-flex items-center px-5 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 transition-all shadow-sm">Sign up</Link>
                                 </div>
-                            </>
-                        ) : (
-                            <div className="space-x-4 flex items-center">
-                                <Link to="/login" className="text-slate-600 font-medium hover:text-cyan-600 transition-colors text-sm">Log in</Link>
-                                <Link to="/register" className="inline-flex items-center px-5 py-2 border border-transparent text-sm font-medium rounded-full text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:from-cyan-600 hover:to-blue-600 transition-all shadow-sm">Sign up</Link>
-                            </div>
-                        )}
+                            )}
+                        </div>
                     </div>
                 </div>
             </div>
+
+            {/* Mobile Menu */}
+            {isMobileMenuOpen && (
+                <div className="md:hidden">
+                    <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                        <Link to="/feed" className="text-slate-600 hover:bg-slate-50 hover:text-cyan-600 block px-3 py-2 rounded-md text-base font-medium">Lost & Found</Link>
+                        <Link to="/marketplace" className="text-slate-600 hover:bg-slate-50 hover:text-cyan-600 block px-3 py-2 rounded-md text-base font-medium">Marketplace</Link>
+                        <Link to="/chat" className="text-slate-600 hover:bg-slate-50 hover:text-cyan-600 block px-3 py-2 rounded-md text-base font-medium">Messages</Link>
+                        {user?.role === 'ADMIN' && <Link to="/admin" className="text-slate-600 hover:bg-slate-50 hover:text-cyan-600 block px-3 py-2 rounded-md text-base font-medium">Admin</Link>}
+                    </div>
+                    {user && (
+                        <div className="pt-4 pb-3 border-t border-slate-200">
+                            <div className="flex items-center px-5">
+                                <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gradient-to-br from-cyan-500 to-blue-600 flex items-center justify-center text-white font-bold">
+                                    {user.name.charAt(0).toUpperCase()}
+                                </div>
+                                <div className="ml-3">
+                                    <div className="text-base font-medium text-slate-800">{user.name}</div>
+                                    <div className="text-sm font-medium text-slate-500">{user.email}</div>
+                                </div>
+                            </div>
+                            <div className="mt-3 px-2 space-y-1">
+                                <Link to="/profile" className="block px-3 py-2 rounded-md text-base font-medium text-slate-600 hover:text-cyan-600 hover:bg-slate-50">Your Profile</Link>
+                                <button onClick={handleLogout} className="w-full text-left block px-3 py-2 rounded-md text-base font-medium text-slate-600 hover:text-cyan-600 hover:bg-slate-50">
+                                    Sign out
+                                </button>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            )}
         </nav>
     );
 }
