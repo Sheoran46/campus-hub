@@ -1,6 +1,6 @@
 package com.sheoran.LostAndFound;
 
-npmimport com.sheoran.LostAndFound.model.Role;
+import com.sheoran.LostAndFound.model.Role;
 import com.sheoran.LostAndFound.model.entities.User;
 import com.sheoran.LostAndFound.repositories.UserRepository;
 import org.springframework.boot.CommandLineRunner;
@@ -13,7 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 public class LostAndFoundApplication {
 
 	public static void main(String[] args) {
-
 		SpringApplication.run(LostAndFoundApplication.class, args);
 	}
 

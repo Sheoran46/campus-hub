@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'http://localhost:8080/api',
+    // Use the environment variable for the backend URL, fallback to localhost for local dev
+    baseURL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080/api',
 });
 
 // Intercept EVERY outgoing request and attach the JWT token if it exists

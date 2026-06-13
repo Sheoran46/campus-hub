@@ -24,20 +24,14 @@ const ChatSection = () => {
         const token = localStorage.getItem('token');
         if (!token || !user) return;
 
+        // Use the environment variable for the WebSocket URL
+        const socketUrl = `${import.meta.env.VITE_API_BASE_URL.replace('/api', '')}/ws-chat`;
+
         const client = new Client({
-            // Using standard WebSocket constructor instead of SockJS if possible, or SockJS fallback
-            webSocketFactory: () => new SockJS('http://localhost:8080/ws-chat'),
-            connectHeaders: {
-                Authorization: `Bearer ${token}`
-            },
-            debug: function (str) {
-              console.log(str);
-            },
+            webSocketFactory: () => new SockJS(socketUrl),
+            connectHeaders: { Authorization: `Bearer ${token}` },
             reconnectDelay: 5000,
-            heartbeatIncoming: 4000,
-            heartbeatOutgoing: 4000,
             onConnect: () => {
-                console.log('Connected to WebSocket as:', user.email);
                 setIsConnected(true);
 
                 // Subscribe to the PUBLIC topic instead of a private queue
@@ -54,25 +48,13 @@ const ChatSection = () => {
                     });
                 });
             },
-            onDisconnect: () => {
-                console.log('Disconnected from WebSocket');
-                setIsConnected(false);
-            },
-            onStompError: (frame) => {
-                console.error('Broker reported error: ' + frame.headers['message']);
-                console.error('Additional details: ' + frame.body);
-                setIsConnected(false);
-            },
+            onDisconnect: () => setIsConnected(false),
         });
 
         client.activate();
         stompClientRef.current = client;
 
-        return () => {
-            if (stompClientRef.current) {
-                stompClientRef.current.deactivate();
-            }
-        };
+        return () => stompClientRef.current?.deactivate();
     }, [user]);
 
     // Fetch GLOBAL history on load
@@ -101,10 +83,20 @@ const ChatSection = () => {
         };
 
         stompClientRef.current.publish({
-            destination: '/app/chat', // Routes to @MessageMapping("/chat") in backend
+            destination: '/app/chat',
             body: JSON.stringify(chatMessage)
         });
 
+        // Optimistically add message to UI
+        const optimisticMsg = {
+            messageId: Date.now(),
+            senderEmail: user.email,
+            senderName: user.name,
+            content: newMessage.trim(),
+            timestamp: new Date().toISOString()
+        };
+
+        setMessages(prev => [...prev, optimisticMsg]);
         setNewMessage('');
     };
 
